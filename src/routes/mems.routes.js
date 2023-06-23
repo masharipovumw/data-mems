@@ -20,7 +20,7 @@ const rout = Router()
 rout.post('/memes',upload.single('image'),authCheck(false),PostMem)
 rout.post('/memes/:id/comments', authCheck(false), comments)
 rout.get('/memes/:id',SerchMems)
-rout.get('/memes/:id/share',share)
+rout.get('/memes/:id/share', authCheck(false),share)
 rout.get('/memes/:id/comments',authCheck(false),Allcomments)
 rout.patch('/memes/:id/like',authCheck(false),like)
 

@@ -54,6 +54,24 @@ export const SerchMems = async (req, res) => {
     `
     const comment = await all(commentSql, [id])
     
+    const shareSql = `
+    SELECT
+        userId 
+    FROM 
+        share
+    WHERE pictureId = ?;
+    `
+    const share = await all(shareSql, [id])
+
+    const likeSql = `
+    SELECT 
+        liked 
+    FROM 
+        like 
+    WHERE pictureId = ?;`
+
+    const like = await all(likeSql, [id])
+
     const AuthorSql = `
     SELECT
         userId AS id ,
@@ -81,7 +99,9 @@ export const SerchMems = async (req, res) => {
         author ,
         mem: {
             mem,
-            comment:comment.length
+            likes: like.length,
+            shares: share.length,
+            comment: comment.length
         }
     })
 }
@@ -155,6 +175,15 @@ export const like = async(req, res) => {
 export const share = async (req, res) => {
 
     const id = +req.params.id
+    const userId = +res.locals.user.userId
+ 
+    const sql = `
+    INSERT INTO 
+        share (userId, pictureId) 
+    VALUES(?,?);`
+
+    await run(sql,[userId,id])
+
 
     const branch = `http://localhost:5050/ecommerce/v1/memes/memes/${id}`
 
